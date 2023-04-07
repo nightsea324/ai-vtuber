@@ -1,8 +1,6 @@
 import openai
 import os
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
-
 messenge = [
     {
         "role": "system",
@@ -13,6 +11,11 @@ messenge = [
         "content": "You are playing Apex Legend."
     },
 ]
+
+
+def openaiInit():
+    openai.api_key = os.getenv('OPENAI_API_KEY')
+    return
 
 
 def chat(msg):

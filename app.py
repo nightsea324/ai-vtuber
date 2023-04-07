@@ -1,31 +1,48 @@
-from open_ai.open_ai import chat, messenge
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, abort
+from dotenv import load_dotenv
 import os
 
-from dotenv import load_dotenv
+from open_ai.open_ai import chat
+import line.linebot as line
 
 load_dotenv()
-
 app = Flask(__name__)
 
 
-@app.route("/", methods=("GET", "POST"))
+@app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
-        msg = request.json.get('msg')
+        msg = request.json.get("msg")
 
         gptResponse = chat("#zh-tw " + msg)
 
-        response = jsonify({'response': gptResponse})
-        response.headers['Content-Type'] = 'application/json'
+        response = jsonify({"response": gptResponse})
+        response.headers["Content-Type"] = "application/json"
 
         return response
 
-    return render_template("index.html", result=messenge)
+    return render_template("index.html")
 
 
-if __name__ == '__main__':
-    if os.getenv('ENV') == 'dev':
+@app.route("/linebot", methods=["POST"])
+def linebot():
+    # get X-Line-Signature header value
+    signature = request.headers["X-Line-Signature"]
+
+    # get request body as text
+    body = request.get_data(as_text=True)
+    app.logger.info("Request body: " + body)
+
+    err = line.lineHandle(body, signature)
+    if err:
+        abort(400)
+
+    return "ok"
+
+
+if __name__ == "__main__":
+    line.lineInit()
+    if os.getenv("ENV") == "dev":
         app.debug = True
     # start build server
-    app.run(host='0.0.0.0', port=8080)
+    app.run(host="0.0.0.0", port=8080)
