@@ -1,14 +1,8 @@
 <!DOCTYPE html>
 <head>
-  <title>OpenAI</title>
+  <title>ai-vtuber</title>
 </head>
 
 <body>
-  {% for item in result %} {% if item.role != 'system' %}
-  <h3 class="result">{{ item.role }}: {{ item.content }}</h3>
-  {% endif %} {% endfor %}
-  <form action="/" method="post">
-    <input type="text" name="msg" placeholder="" required />
-    <input type="submit" value="Generate" />
-  </form>
+  <h3>this is ai-vtuber demo</h3>
 </body>
